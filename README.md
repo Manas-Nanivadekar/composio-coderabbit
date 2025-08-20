@@ -1,4 +1,4 @@
-# 🚀 Composio CodeRabbit - AI-Powered Repository Intelligence Dashboard
+# 🚀 H8M
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=next.js&logoColor=white)](https://nextjs.org/)
@@ -8,8 +8,6 @@
 [![Google Gemini](https://img.shields.io/badge/Google_Gemini-4285F4?style=flat&logo=google&logoColor=white)](https://ai.google/)
 
 **An intelligent dashboard for analyzing and exploring GitHub repository data with AI-powered insights, search capabilities, and comprehensive visualization tools.**
-
-![Dashboard Preview](public/placeholder-logo.svg)
 
 ---
 
