@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { 
   AlertTriangle, 
   TrendingUp, 
@@ -15,8 +15,7 @@ import {
   Eye,
   Calendar,
   Briefcase,
-  Settings,
-  X
+  Settings
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -72,7 +71,7 @@ interface TeamRiskData {
   actionRequired: boolean
 }
 
-export function KPIDashboard() {
+export function ManagerDashboard() {
   const [selectedView, setSelectedView] = useState<'overview' | 'knowledge' | 'decisions' | 'documentation' | 'heatmap'>('overview')
   const [selectedTeamFilter, setSelectedTeamFilter] = useState<string>('all')
   const [selectedExpert, setSelectedExpert] = useState<KeyExpert | null>(null)
@@ -829,7 +828,7 @@ export function KPIDashboard() {
                           )}
                         </div>
                       )
-                    })()} 
+                    })()}
                   </CardContent>
                 </Card>
               )}
@@ -840,5 +839,3 @@ export function KPIDashboard() {
     </div>
   )
 }
-
-

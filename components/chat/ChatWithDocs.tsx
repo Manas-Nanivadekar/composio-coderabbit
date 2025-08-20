@@ -1,108 +1,68 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
   Upload,
   FileText,
   Search,
   Send,
   Database,
+  Loader2,
+  X,
+  AlertCircle,
 } from "lucide-react"
-
-interface Document {
-  id: string
-  name: string
-  type: string
-  size: string
-  uploadDate: string
-  category: "strategic" | "operational" | "technical" | "hr"
-}
-
-interface ChatMessage {
-  id: string
-  type: "user" | "assistant"
-  content: string
-  timestamp: string
-  sources?: string[]
-}
+import { usePDFChat } from "@/hooks/use-pdf-chat"
 
 export function ChatWithDocs() {
-  const [selectedDocs, setSelectedDocs] = useState<string[]>([])
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-    {
-      id: "1",
-      type: "assistant",
-      content:
-        "Hello! I can help you analyze documents and answer questions. Choose documents from the database or upload new ones to get started.",
-      timestamp: "10:00 AM",
-    },
-  ])
+  const {
+    sessionId,
+    uploadedDocuments,
+    chatMessages,
+    isUploading,
+    isChatting,
+    isLoading,
+    uploadError,
+    chatError,
+    uploadFiles,
+    sendMessage,
+    clearDocuments
+  } = usePDFChat()
+  
   const [inputMessage, setInputMessage] = useState("")
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const mockDocuments: Document[] = [
-    {
-      id: "1",
-      name: "API Architecture Guidelines",
-      type: "PDF",
-      size: "2.4 MB",
-      uploadDate: "2024-01-15",
-      category: "technical",
-    },
-    {
-      id: "2",
-      name: "Q4 Strategic Plan",
-      type: "DOCX",
-      size: "1.8 MB",
-      uploadDate: "2024-01-10",
-      category: "strategic",
-    },
-    { id: "3", name: "Team Performance Review", type: "PDF", size: "3.2 MB", uploadDate: "2024-01-08", category: "hr" },
-    {
-      id: "4",
-      name: "Database Migration Guide",
-      type: "MD",
-      size: "856 KB",
-      uploadDate: "2024-01-05",
-      category: "technical",
-    },
-    {
-      id: "5",
-      name: "Risk Assessment Report",
-      type: "PDF",
-      size: "4.1 MB",
-      uploadDate: "2024-01-03",
-      category: "strategic",
-    },
-  ]
-
-  const handleSendMessage = () => {
-    if (!inputMessage.trim()) return
-
-    const newUserMessage: ChatMessage = {
-      id: Date.now().toString(),
-      type: "user",
-      content: inputMessage,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || [])
+    const pdfFiles = files.filter(file => file.type === 'application/pdf')
+    
+    if (pdfFiles.length === 0) {
+      alert('Please select PDF files only.')
+      return
     }
-
-    const mockResponse: ChatMessage = {
-      id: (Date.now() + 1).toString(),
-      type: "assistant",
-      content: `Based on the selected documents, I can see that ${inputMessage.toLowerCase().includes("risk") ? "there are several risk factors to consider in your strategic planning" : "the technical documentation shows best practices for implementation"}. Would you like me to analyze specific sections or provide recommendations?`,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      sources:
-        selectedDocs.length > 0
-          ? mockDocuments.filter((doc) => selectedDocs.includes(doc.id)).map((doc) => doc.name)
-          : undefined,
+    
+    await uploadFiles(pdfFiles)
+    
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
     }
+  }
 
-    setChatMessages((prev) => [...prev, newUserMessage, mockResponse])
+  const handleUploadClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim() || isChatting) return
+
+    await sendMessage(inputMessage)
     setInputMessage("")
   }
 
@@ -111,11 +71,48 @@ export function ChatWithDocs() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Chat with Documents</h2>
-          <p className="text-muted-foreground">Analyze documents and get AI-powered insights</p>
+          <p className="text-muted-foreground">
+            Analyze documents and get AI-powered insights
+            {sessionId && (
+              <span className="ml-2 text-xs text-primary">
+                • Session: {sessionId.substring(0, 8)}...
+              </span>
+            )}
+          </p>
         </div>
+        {isLoading && (
+          <div className="flex items-center space-x-2 text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span className="text-sm">Loading session...</span>
+          </div>
+        )}
       </div>
 
-      {/* Executive metrics removed from chat. Use Executive Dashboard instead. */}
+      {/* Upload Error Alert */}
+      {uploadError && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{uploadError}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Chat Error Alert */}
+      {chatError && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{chatError}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* File input (hidden) */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".pdf"
+        multiple
+        onChange={handleFileUpload}
+        className="hidden"
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Document Selection */}
@@ -129,60 +126,86 @@ export function ChatWithDocs() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex space-x-2">
-              <Button variant="outline" size="sm" className="flex-1 border-border text-foreground bg-transparent">
-                <Upload className="h-4 w-4 mr-2" />
-                Upload
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex-1 border-border text-foreground bg-transparent"
+                onClick={handleUploadClick}
+                disabled={isUploading || isLoading}
+              >
+                {isUploading ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Upload className="h-4 w-4 mr-2" />
+                )}
+                {isUploading ? "Uploading..." : "Upload PDF"}
               </Button>
-              <Button variant="outline" size="sm" className="border-border text-foreground bg-transparent">
-                <Search className="h-4 w-4" />
-              </Button>
+              {uploadedDocuments.length > 0 && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="border-border text-foreground bg-transparent"
+                  onClick={clearDocuments}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
             </div>
 
             <ScrollArea className="h-64">
               <div className="space-y-2">
-                {mockDocuments.map((doc) => (
-                  <div
-                    key={doc.id}
-                    className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                      selectedDocs.includes(doc.id)
-                        ? "bg-primary/20 border-primary"
-                        : "bg-muted/50 border-border hover:bg-muted"
-                    }`}
-                    onClick={() => {
-                      setSelectedDocs((prev) =>
-                        prev.includes(doc.id) ? prev.filter((id) => id !== doc.id) : [...prev, doc.id],
-                      )
-                    }}
-                  >
-                    <div className="flex items-start space-x-3">
-                      <FileText className="h-4 w-4 text-muted-foreground mt-0.5" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate">{doc.name}</p>
-                        <div className="flex items-center space-x-2 mt-1">
-                          <Badge variant="outline" className="text-xs border-border text-muted-foreground">
-                            {doc.type}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">{doc.size}</span>
+                {isLoading ? (
+                  <div className="text-center py-8">
+                    <Loader2 className="h-8 w-8 text-muted-foreground mx-auto mb-2 animate-spin" />
+                    <p className="text-sm text-muted-foreground">Loading previous session...</p>
+                  </div>
+                ) : uploadedDocuments.length === 0 ? (
+                  <div className="text-center py-8">
+                    <FileText className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground">No documents uploaded yet</p>
+                    <p className="text-xs text-muted-foreground mt-1">Click "Upload PDF" to add documents</p>
+                  </div>
+                ) : (
+                  uploadedDocuments.map((doc) => (
+                    <div
+                      key={doc.id}
+                      className="p-3 rounded-lg border bg-primary/10 border-primary/20"
+                    >
+                      <div className="flex items-start space-x-3">
+                        <FileText className="h-4 w-4 text-primary mt-0.5" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">{doc.name}</p>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <Badge variant="outline" className="text-xs border-border text-muted-foreground">
+                              PDF
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">{doc.size}</span>
+                            {doc.chunkCount && (
+                              <span className="text-xs text-muted-foreground">• {doc.chunkCount} chunks</span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </ScrollArea>
 
-            {selectedDocs.length > 0 && (
+            {uploadedDocuments.length > 0 && (
               <div className="pt-2 border-t border-border">
-                <p className="text-xs text-muted-foreground mb-2">{selectedDocs.length} documents selected</p>
+                <p className="text-xs text-muted-foreground mb-2">{uploadedDocuments.length} document(s) ready for chat</p>
                 <div className="flex flex-wrap gap-1">
-                  {selectedDocs.map((docId) => {
-                    const doc = mockDocuments.find((d) => d.id === docId)
-                    return (
-                      <Badge key={docId} variant="secondary" className="text-xs bg-primary/20 text-foreground">
-                        {doc?.name.split(" ")[0]}...
-                      </Badge>
-                    )
-                  })}
+                  {uploadedDocuments.slice(0, 3).map((doc) => (
+                    <Badge key={doc.id} variant="secondary" className="text-xs bg-primary/20 text-foreground">
+                      {doc.name.split(".")[0].substring(0, 10)}...
+                    </Badge>
+                  ))}
+                  {uploadedDocuments.length > 3 && (
+                    <Badge variant="secondary" className="text-xs bg-primary/20 text-foreground">
+                      +{uploadedDocuments.length - 3} more
+                    </Badge>
+                  )}
                 </div>
               </div>
             )}
@@ -242,14 +265,23 @@ export function ChatWithDocs() {
 
             <div className="flex space-x-2">
               <Input
-                placeholder={"Ask about code, architecture, or technical documentation..."}
+                placeholder={uploadedDocuments.length === 0 ? "Upload PDF documents first..." : "Ask questions about your documents..."}
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                onKeyPress={(e) => e.key === "Enter" && !isChatting && handleSendMessage()}
                 className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+                disabled={isChatting || uploadedDocuments.length === 0 || isLoading}
               />
-              <Button onClick={handleSendMessage} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                <Send className="h-4 w-4" />
+              <Button 
+                onClick={handleSendMessage} 
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                disabled={isChatting || !inputMessage.trim() || uploadedDocuments.length === 0 || isLoading}
+              >
+                {isChatting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
               </Button>
             </div>
           </CardContent>
