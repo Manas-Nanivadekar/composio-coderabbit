@@ -1,0 +1,16 @@
+list_repos_task:
+  description: >
+    Given an input account name, list all GitHub repositories under that account.
+    The account may be a user or an organization. 
+    - If the account is empty, list repos for the authenticated user
+    - If it's a user account, use the user repositories endpoint
+    - If it's an organization, use the organization repository listing API
+    - Handle pagination (per_page=100) until all repos are collected
+    Return a clean list with: name, full_name, visibility, fork status, and HTML URL.
+  expected_output: >
+    A markdown table of repositories with columns:
+    name | full_name | html_url | visibility | fork | description
+    Include a total repo count at the top.
+  agent: "github_agent"
+  inputs:
+    account: "USER_NAME"
