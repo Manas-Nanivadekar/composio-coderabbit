@@ -13,4 +13,102 @@ list_repos_task:
     Include a total repo count at the top.
   agent: "github_agent"
   inputs:
-    account: "USER_NAME"
+    account: "Manas-Nanivadekar"
+
+fetch_slack_data_task:
+  description: >
+    Fetch all data from the Slack channel named "dailylog". This includes:
+    - All messages in the channel (handle pagination to get complete history)
+    - Message metadata (timestamp, author, reactions, replies)
+    - User information for message authors
+    - Channel information and settings
+    - Any file attachments or links shared in the channel
+    - Thread conversations and replies
+    Organize all this data into a comprehensive JSON structure.
+  expected_output: >
+    A well-structured JSON object containing:
+    {
+      "channel_info": {
+        "name": "dailylog",
+        "id": "C01JFU6AU1Z",
+        "topic": "channel_topic",
+        "purpose": "channel_purpose",
+        "member_count": number,
+        "created": "timestamp"
+      },
+      "messages": [
+        {
+          "id": "message_id",
+          "text": "message_content",
+          "user": {
+            "id": "user_id",
+            "name": "username",
+            "real_name": "real_name",
+            "email": "email"
+          },
+          "timestamp": "timestamp",
+          "reactions": [],
+          "replies": [],
+          "attachments": [],
+          "links": []
+        }
+      ],
+      "users": {},
+      "total_messages": number,
+      "date_range": {
+        "oldest": "timestamp",
+        "newest": "timestamp"
+      }
+    }
+  agent: "slack_agent"
+  inputs:
+    channel_id: "C01JFU6AU1Z"
+
+fetch_confluence_data_task:
+  description: >
+    Extract comprehensive data from the Confluence space "confluence-fozor". This includes:
+    - All pages in the space (handle pagination to get complete list)
+    - Page content, metadata, and hierarchy structure
+    - Page attachments and links
+    - User information for page authors and contributors
+    - Space information and settings
+    - Comments and version history where available
+    Organize all this data into a comprehensive JSON structure.
+  expected_output: >
+    A well-structured JSON object containing:
+    {
+      "space_info": {
+        "key": "confluence-fozor",
+        "name": "space_name",
+        "description": "space_description",
+        "type": "space_type",
+        "created": "timestamp",
+        "homepage_id": "page_id"
+      },
+      "pages": [
+        {
+          "id": "page_id",
+          "title": "page_title",
+          "content": "page_content",
+          "created": "timestamp",
+          "updated": "timestamp",
+          "author": {
+            "id": "user_id",
+            "name": "username",
+            "displayName": "display_name"
+          },
+          "ancestors": [],
+          "children": [],
+          "attachments": [],
+          "links": [],
+          "comments": [],
+          "version": number
+        }
+      ],
+      "users": {},
+      "total_pages": number,
+      "last_updated": "timestamp"
+    }
+  agent: "confluence_agent"
+  inputs:
+    space_key: "confluence-fozor"
