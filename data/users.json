@@ -1,0 +1,18 @@
+[
+  {
+    "id": "1755675320181",
+    "email": "malayp@gmail.com",
+    "name": "malay p",
+    "role": "developer",
+    "team": "frontend",
+    "passwordHash": "$2a$10$U2/El1yV1iydFjOnQNGRkeiMhsfoBjoIx.72NpJLvb2HGRZofITSW"
+  },
+  {
+    "id": "1755675407129",
+    "email": "malayp2@gmail.com",
+    "name": "malay2 p",
+    "role": "manager",
+    "team": "backend",
+    "passwordHash": "$2a$10$fJzKptSXATOCAbDv3yf0/u4byA/Il1T3u0RvaPg3rkN9QDbKFKcDm"
+  }
+]

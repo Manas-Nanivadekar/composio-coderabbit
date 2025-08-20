@@ -1,0 +1,6 @@
+{
+  "embedding_model": "models/embedding-001",
+  "num_chunks": 239,
+  "chunk_size": 800,
+  "chunk_overlap": 120
+}

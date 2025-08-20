@@ -1,0 +1,26 @@
+# Core dependencies
+PyMuPDF>=1.21.0  # For PDF metadata extraction
+tqdm>=4.65.0     # For progress bars
+python-dotenv>=1.0.0  # For environment variables
+loguru>=0.7.0
+pypdfium2>=4.20.0
+mineru>=0.6.4
+
+# RAG / Vector DB / LLMs
+fastapi>=0.109.0
+uvicorn>=0.27.0
+python-multipart>=0.0.7
+faiss-cpu>=1.7.4
+pypdf2>=3.0.0
+python-pptx>=0.6.23
+langchain>=0.2.0
+langchain-community>=0.2.0
+langchain-google-genai>=1.0.6
+google-generativeai>=0.7.0
+
+# Development dependencies
+pytest>=7.3.1
+black>=23.3.0
+isort>=5.12.0
+mypy>=1.2.0
+pylint>=2.17.0
