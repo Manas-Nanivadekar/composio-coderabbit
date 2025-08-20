@@ -14,3 +14,23 @@ list_repos_task:
   agent: "github_agent"
   inputs:
     account: "USER_NAME"
+
+fetch_prs_task:
+  description: >
+    After listing repositories, fetch Pull Requests for a specific repository.
+    Given a repository owner and name (from the previous task output or input):
+    - Use the GitHub Pull Requests API to list all PRs for the specified repository
+    - Include both open and closed PRs (use state=all parameter)
+    - Handle pagination (per_page=100) until all PRs are collected
+    - For each PR, collect: number, title, state, author, created_at, updated_at, html_url, body (first 200 chars)
+    - Sort by updated_at (most recent first)
+  expected_output: >
+    A markdown table of Pull Requests with columns:
+    PR# | Title | State | Author | Created | Updated | URL | Description
+    Include total PR count and summary statistics (open/closed/merged counts).
+  agent: "github_agent"
+  inputs:
+    repo_owner: "REPO_OWNER"
+    repo_name: "REPO_NAME"
+  context:
+    - list_repos_task

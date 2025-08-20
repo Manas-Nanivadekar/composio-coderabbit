@@ -20,6 +20,13 @@ yarn-error.log*
 # env files
 .env*
 
+# data files with sensitive information
+data/composio/
+backend_engine/composio_repo_data/
+**/all_issues.json
+**/all_pulls.json
+**/composio_repo_context.json
+
 # vercel
 .vercel
 

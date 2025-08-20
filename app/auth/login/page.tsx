@@ -42,7 +42,7 @@ export default function LoginPage() {
         <CardHeader className="text-center">
           <div className="flex items-center justify-center mb-4">
             <Building2 className="h-8 w-8 text-primary mr-2" />
-            <span className="text-2xl font-bold text-foreground">DevMemory</span>
+            <span className="text-2xl font-bold text-foreground">H8M</span>
           </div>
           <CardTitle className="text-foreground">Welcome back</CardTitle>
           <CardDescription className="text-muted-foreground">Sign in to access your developer dashboard</CardDescription>

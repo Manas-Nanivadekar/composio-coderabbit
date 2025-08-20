@@ -18,10 +18,30 @@ def run():
     """
     Run the crew.
     """
-    inputs = {"topic": "AI LLMs", "current_year": str(datetime.now().year)}
+    # Default inputs for GitHub operations
+    inputs = {
+        "account": "octocat",  # GitHub username to list repos for
+        "repo_owner": "octocat",  # Repository owner for PR fetching
+        "repo_name": "Hello-World",  # Repository name for PR fetching
+        "current_year": str(datetime.now().year)
+    }
+    
+    # Allow command line arguments to override defaults
+    if len(sys.argv) > 1:
+        inputs["account"] = sys.argv[1]
+        inputs["repo_owner"] = sys.argv[1]
+    
+    if len(sys.argv) > 2:
+        inputs["repo_name"] = sys.argv[2]
+    
+    print(f"Running crew with:")
+    print(f"  Account: {inputs['account']}")
+    print(f"  Repository: {inputs['repo_owner']}/{inputs['repo_name']}")
 
     try:
-        BackendEngine().crew().kickoff(inputs=inputs)
+        result = BackendEngine().crew().kickoff(inputs=inputs)
+        print(f"\n✅ Crew execution completed successfully!")
+        return result
     except Exception as e:
         raise Exception(f"An error occurred while running the crew: {e}")
 

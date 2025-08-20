@@ -8,7 +8,7 @@ from composio_crewai import ComposioToolSet, App
 
 @CrewBase
 class BackendEngine:
-    """Single-agent crew to list repos for a GitHub account via Composio."""
+    """Crew to list repos and fetch PRs for a GitHub account via Composio."""
 
     agents: List[Agent]
     tasks: List[Task]
@@ -28,6 +28,10 @@ class BackendEngine:
     @task
     def list_repos_task(self) -> Task:
         return Task(config=self.tasks_config["list_repos_task"])
+
+    @task
+    def fetch_prs_task(self) -> Task:
+        return Task(config=self.tasks_config["fetch_prs_task"])
 
     @crew
     def crew(self) -> Crew:

@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useDebounce } from "@/hooks/useDebounce"
-import { mockSearchAPI } from "@/utils/mockApi"
+import { enhancedSearchAPI } from "@/utils/composioApi"
 import { useToast } from "@/hooks/use-toast"
 import type { SearchResult } from "@/utils/types"
 
@@ -17,11 +17,12 @@ export function SearchInterface() {
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
   const [recentSearches] = useState([
-    "Why was Redis added to auth service?",
-    "Who worked on the GraphQL migration?",
-    "What broke the CI pipeline last week?",
-    "Which tickets are blocking mobile release?",
-    "How does the caching layer work?",
+    "authentication issues in ComposioHQ",
+    "OAuth implementation bugs",
+    "SDK integration problems",
+    "API rate limiting issues",
+    "Zendesk oauth subdomain requirements",
+    "VercelProvider security vulnerability",
   ])
 
   const debouncedQuery = useDebounce(query, 300)
@@ -35,7 +36,7 @@ export function SearchInterface() {
 
       setIsLoading(true)
       try {
-        const searchResults = await mockSearchAPI.search(debouncedQuery)
+        const searchResults = await enhancedSearchAPI.search(debouncedQuery)
         setResults(searchResults)
         if (searchResults.length > 0) {
           toast({
@@ -88,15 +89,15 @@ export function SearchInterface() {
         <div className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <Code2 className="h-8 w-8 text-primary" />
-            <h2 className="text-3xl font-bold text-foreground">Ask About Any Code, Feature, or Bug</h2>
+            <h2 className="text-3xl font-bold text-foreground">Search ComposioHQ Repository</h2>
           </div>
-          <p className="text-muted-foreground text-lg">Search across GitHub, Jira, Slack, and your codebase</p>
+          <p className="text-muted-foreground text-lg">Search through 241 issues and 1508+ pull requests from the ComposioHQ/composio repository</p>
         </div>
 
         <div className="relative w-full max-w-2xl">
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="e.g., 'Why was Redis added to auth service?' or 'Who worked on the GraphQL migration?'"
+            placeholder="e.g., 'authentication issues' or 'OAuth implementation bugs' or 'SDK integration problems'"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="h-14 pl-12 pr-12 text-lg border-2 focus:border-primary transition-all duration-200 shadow-sm"
