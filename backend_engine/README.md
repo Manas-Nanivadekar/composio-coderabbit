@@ -15,9 +15,11 @@ pip install uv
 Next, navigate to your project directory and install the dependencies:
 
 (Optional) Lock the dependencies and install them by using the CLI command:
+
 ```bash
 crewai install
 ```
+
 ### Customizing
 
 **Add your `OPENAI_API_KEY` into the `.env` file**
@@ -46,9 +48,43 @@ The backend_engine Crew is composed of multiple AI agents, each with unique role
 ## Support
 
 For support, questions, or feedback regarding the BackendEngine Crew or crewAI.
+
 - Visit our [documentation](https://docs.crewai.com)
 - Reach out to us through our [GitHub repository](https://github.com/joaomdmoura/crewai)
 - [Join our Discord](https://discord.com/invite/X4JWnZnxPb)
 - [Chat with our docs](https://chatg.pt/DWjSBZn)
 
 Let's create wonders together with the power and simplicity of crewAI.
+
+## Composio Tool Integration
+
+Composio provides 250+ production-ready tools with flexible authentication. This project integrates Composio tools into both agents.
+
+### Installation
+
+Dependencies are declared in `pyproject.toml` and will be installed with your normal project install. If installing manually, ensure:
+
+```bash
+pip install composio-crewai
+pip install crewai
+```
+
+After installation, authenticate Composio either by logging in or setting an API key:
+
+```bash
+composio login
+# or
+export COMPOSIO_API_KEY=YOUR_KEY
+```
+
+Optionally, connect GitHub (default app used by this project):
+
+```bash
+composio add github
+```
+
+### Usage
+
+- Both `researcher` and `reporting_analyst` agents automatically load Composio tools (defaulting to GitHub app). See `src/backend_engine/tools/composio_tools.py` to customize apps or specific actions.
+
+For more details, see the official documentation: [Composio Tool for crewAI](https://docs.crewai.com/en/tools/automation/composiotool#installation).
