@@ -7,12 +7,6 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Google Gemini](https://img.shields.io/badge/Google_Gemini-4285F4?style=flat&logo=google&logoColor=white)](https://ai.google/)
 
-**An intelligent dashboard for analyzing and exploring GitHub repository data with AI-powered insights, search capabilities, and comprehensive visualization tools.**
-
-![Dashboard Preview](public/placeholder-logo.svg)
-
----
-
 ## ✨ Features
 
 ### 🔍 **Intelligent Search & Analytics**
