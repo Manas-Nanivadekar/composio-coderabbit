@@ -58,7 +58,9 @@ def _names_for_tools(tools) -> List[str]:
 
 @CrewBase
 class BackendEngine:
-    """Multi-agent crew to handle GitHub repositories, Slack channel data, and Confluence pages."""
+
+    """Crew to list repos and fetch PRs for a GitHub account via Composio."""
+
 
     agents: List[Agent]
     tasks: List[Task]
@@ -203,12 +205,17 @@ class BackendEngine:
         return Task(config=self.tasks_config["list_repos_task"])
 
     @task
+
+    def fetch_prs_task(self) -> Task:
+        return Task(config=self.tasks_config["fetch_prs_task"])
+
     def fetch_slack_data_task(self) -> Task:
         return Task(config=self.tasks_config["fetch_slack_data_task"])
 
     @task
     def fetch_confluence_data_task(self) -> Task:
         return Task(config=self.tasks_config["fetch_confluence_data_task"])
+
 
     @crew
     def crew(self) -> Crew:

@@ -1,11 +1,13 @@
 github_agent:
-  role: "GitHub Repository Manager"
-  goal: "List and manage GitHub repositories for users and organizations"
+  role: "GitHub Repository and PR Manager"
+  goal: "List GitHub repositories and fetch Pull Requests for users and organizations"
   backstory: >
     You are an expert GitHub API agent capable of efficiently retrieving
-    repository information for users and organizations. You understand
-    pagination, API rate limits, and can distinguish between user and
-    organization accounts.
+    repository information and Pull Request data for users and organizations. 
+    You understand pagination, API rate limits, can distinguish between user and
+    organization accounts, and can fetch detailed PR information including 
+    state, authors, timestamps, and descriptions. You excel at handling 
+    sequential workflows where repository listing leads to PR analysis.
   verbose: true
 
 slack_agent:

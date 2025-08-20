@@ -13,102 +13,25 @@ list_repos_task:
     Include a total repo count at the top.
   agent: "github_agent"
   inputs:
-    account: "Manas-Nanivadekar"
 
-fetch_slack_data_task:
-  description: >
-    Fetch all data from the Slack channel named "dailylog". This includes:
-    - All messages in the channel (handle pagination to get complete history)
-    - Message metadata (timestamp, author, reactions, replies)
-    - User information for message authors
-    - Channel information and settings
-    - Any file attachments or links shared in the channel
-    - Thread conversations and replies
-    Organize all this data into a comprehensive JSON structure.
-  expected_output: >
-    A well-structured JSON object containing:
-    {
-      "channel_info": {
-        "name": "dailylog",
-        "id": "C01JFU6AU1Z",
-        "topic": "channel_topic",
-        "purpose": "channel_purpose",
-        "member_count": number,
-        "created": "timestamp"
-      },
-      "messages": [
-        {
-          "id": "message_id",
-          "text": "message_content",
-          "user": {
-            "id": "user_id",
-            "name": "username",
-            "real_name": "real_name",
-            "email": "email"
-          },
-          "timestamp": "timestamp",
-          "reactions": [],
-          "replies": [],
-          "attachments": [],
-          "links": []
-        }
-      ],
-      "users": {},
-      "total_messages": number,
-      "date_range": {
-        "oldest": "timestamp",
-        "newest": "timestamp"
-      }
-    }
-  agent: "slack_agent"
-  inputs:
-    channel_id: "C01JFU6AU1Z"
+    account: "USER_NAME"
 
-fetch_confluence_data_task:
+fetch_prs_task:
   description: >
-    Extract comprehensive data from the Confluence space "confluence-fozor". This includes:
-    - All pages in the space (handle pagination to get complete list)
-    - Page content, metadata, and hierarchy structure
-    - Page attachments and links
-    - User information for page authors and contributors
-    - Space information and settings
-    - Comments and version history where available
-    Organize all this data into a comprehensive JSON structure.
+    After listing repositories, fetch Pull Requests for a specific repository.
+    Given a repository owner and name (from the previous task output or input):
+    - Use the GitHub Pull Requests API to list all PRs for the specified repository
+    - Include both open and closed PRs (use state=all parameter)
+    - Handle pagination (per_page=100) until all PRs are collected
+    - For each PR, collect: number, title, state, author, created_at, updated_at, html_url, body (first 200 chars)
+    - Sort by updated_at (most recent first)
   expected_output: >
-    A well-structured JSON object containing:
-    {
-      "space_info": {
-        "key": "confluence-fozor",
-        "name": "space_name",
-        "description": "space_description",
-        "type": "space_type",
-        "created": "timestamp",
-        "homepage_id": "page_id"
-      },
-      "pages": [
-        {
-          "id": "page_id",
-          "title": "page_title",
-          "content": "page_content",
-          "created": "timestamp",
-          "updated": "timestamp",
-          "author": {
-            "id": "user_id",
-            "name": "username",
-            "displayName": "display_name"
-          },
-          "ancestors": [],
-          "children": [],
-          "attachments": [],
-          "links": [],
-          "comments": [],
-          "version": number
-        }
-      ],
-      "users": {},
-      "total_pages": number,
-      "last_updated": "timestamp"
-    }
-  agent: "confluence_agent"
+    A markdown table of Pull Requests with columns:
+    PR# | Title | State | Author | Created | Updated | URL | Description
+    Include total PR count and summary statistics (open/closed/merged counts).
+  agent: "github_agent"
   inputs:
-    space_key: "confluence-fozor"
+    repo_owner: "REPO_OWNER"
+    repo_name: "REPO_NAME"
+  context:
+    - list_repos_task
