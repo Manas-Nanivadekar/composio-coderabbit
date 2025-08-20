@@ -369,10 +369,3 @@ This project is licensed under the **ISC License**. See the [LICENSE](LICENSE) f
 
 <div align="center">
 
-### ⭐ Star this repo if you find it helpful!
-
-**Built with ❤️ by the Composio CodeRabbit team**
-
-[🌟 Give it a star](https://github.com/your-username/composio-coderabbit) • [🐛 Report bug](https://github.com/your-username/composio-coderabbit/issues) • [✨ Request feature](https://github.com/your-username/composio-coderabbit/issues)
-
-</div>
